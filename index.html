@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Boyfriend Application</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Boyfriend Application</h1>
+        <p>Welcome. You have been chosen to apply for the boyfriend application 2025!</p>
+    </header>
+
+    <section id="about">
+        <h2>About Me</h2>
+        <p>Hi! I'm Lesley.Kenyan, a very tall babe btw, sarcastic but idk why some ppl don't get that,homebody,I loveeeee perfumes like trying out new scents, honestly I enjoy coding I guess because its lowkey challenging like creating this website wuahhhh and lastly I also love sketching. Enjoy the boyfriend application.</p>
+    </section>
+
+    <section id="questions">
+        <h2>Questions for You</h2>
+        <form action="https://formspree.io/f/xkggjevl" method="POST">
+            <label for="governmentname">What's your government name?</label>
+            <input type="text" id="governmentname" name="governmentname" required>
+        
+            <label for="icksaboutyourself">What are your icks about yourself?</label>
+            <input type="text" id="icksaboutyourself" name="icksaboutyourself" required>
+        
+            <label for="favoritesong">What's your favorite song?</label>
+            <input type="text" id="favoritesong" name="favoritesong" required>
+
+            <label for="healthyrelationship">What's your idea of a healthy relationship?</label>
+            <input type="text" id="healthyrelationship" name="healthyrelationship"required>
+            
+            <label for="nervous during our first kiss">Were you nervous during our first kiss?</label>
+            <input type="text" id="nervous during our first kiss" name="nervous during our first kiss" required>
+
+            <label for="one thing you like about me">What is one thing you like about me?</label>
+            <input type="text" id="one thing you like about me" name="one thing you like about me" required>
+
+            <label for="emotionallyavailable">Do you think you are emotionally available? (Yes/No)</label>
+            <input type="text" id="emotionallyavailable" name="emotionallyavailable" required>
+            <section id="polls">
+                <h2>Poll: What's your favorite ice cream flavor?</h2>
+                <form id="pollForm">
+                    <input type="radio" id="vanilla" name="icecream" value="Vanilla">
+                    <label for="vanilla">Vanilla</label><br>
+            
+                    <input type="radio" id="chocolate" name="icecream" value="Chocolate">
+                    <label for="chocolate">Chocolate</label><br>
+            
+                    <input type="radio" id="strawberry" name="icecream" value="Strawberry">
+                    <label for="strawberry">Strawberry</label><br>
+            
+                    <button type="submit">Vote</button>
+                    <section id="polls">
+                        <h3>Poll: Are you confrontational?</h3>
+                        <form id="pollForm">
+                            <input type="radio" id="yes" name="confrontational" value="Yes">
+                            <label for="yes">Yes</label><br>
+                
+                            <input type="radio" id="no" name="confrontational" value="No">
+                            <label for="no">No</label><br>
+                
+                            <input type="radio" id="depends" name="confrontational" value="Depends on the situation">
+                            <label for="depends">Depends on the situation</label><br>
+                
+                            <button type="submit">Vote</button>
+                </form>
+            
+                <div id="result"></div>
+            </section>
+            
+            <button type="submit">Submit Application</button>
+        </form>
+    </section>
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js"></script>
+
+<script>
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyA0-qUwovy5Sk0skqAW1YE0xxitx74Kq6M",
+  authDomain: "the-bfap.firebaseapp.com",
+  databaseURL: "https://the-bfap-default-rtdb.firebaseio.com",
+  projectId: "the-bfap",
+  storageBucket: "the-bfap.firebasestorage.app",
+  messagingSenderId: "318392115713",
+  appId: "1:318392115713:web:d59db68b010e937d339600",
+  measurementId: "G-HC42RHRSVM"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+
+// Get a reference to Firestore
+const db = firebase.firestore();
+// Poll voting logic
+document.getElementById('pollForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent form from submitting the usual way
+
+    // Get the selected flavor from the radio buttons
+    const selectedVote = document.querySelector('input[name="icecream"]:checked');
+
+    if (selectedVote) {
+        const vote = selectedVote.value;  // Get the selected flavor (Vanilla, Chocolate, Strawberry)
+
+        // Check if the vote already exists in Firestore
+        db.collection('pollResults').doc(vote).get().then(doc => {
+            if (doc.exists) {
+                // If the flavor exists, increment the vote count
+                const currentVotes = doc.data().votes;
+                db.collection('pollResults').doc(vote).update({
+                    votes: currentVotes + 1
+                }).then(() => {
+                    showResult(vote, currentVotes + 1);
+                });
+            } else {
+                // If the flavor doesn't exist in Firestore, create it with 1 vote
+                db.collection('pollResults').doc(vote).set({
+                    votes: 1
+                }).then(() => {
+                    showResult(vote, 1);
+                });
+            }
+        }).catch((error) => {
+            console.error("Error updating document: ", error);
+        });
+    } else {
+        alert('Please select a flavor to vote!');
+    }
+});
+
+// Function to show the result after voting
+function showResult(vote, count) {
+    const resultText = `Thank you for voting! Your favorite flavor is ${vote}. It has ${count} votes.`;
+    document.getElementById('result').innerText = resultText;
+}
+if (selectedVote) {
+                const vote = selectedVote.value;
+
+                db.collection('pollResults').doc(vote).get().then(doc => {
+                    if (doc.exists) {
+                        const currentVotes = doc.data().votes;
+                        db.collection('pollResults').doc(vote).update({
+                            votes: currentVotes + 1
+                        }).then(() => {
+                            showResult(vote, currentVotes + 1);
+                        });
+                    } else {
+                        db.collection('pollResults').doc(vote).set({
+                            votes: 1
+                        }).then(() => {
+                            showResult(vote, 1);
+                        });
+                    }
+                }).catch((error) => {
+                    console.error("Error updating document: ", error);
+                });
+            } else {
+                alert('Please select an option to vote!');
+            }
+
+        // Function to show result in the div
+        function showResult(vote, count) {
+            const resultText = `Thank you for voting! Your choice: "${vote}". It has ${count} votes.`;
+            document.getElementById('result').innerText = resultText; // Updates the result div
+        }
+</script>
+    <footer>
+        <p>Thank you for applying! I’ll review your answers shortly. 😘</p>
+    </footer>
+    <script>
+        document.getElementById('applicationForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the form from refreshing the page
+            alert('Thank you for your application! I will review it soon. 😘');
+        });
+    </script>    
+</body>
+</html>
